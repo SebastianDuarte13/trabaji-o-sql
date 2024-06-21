@@ -20,7 +20,7 @@ CREATE TABLE conductores (
 );
 
 CREATE TABLE clientes (
-    cliente_id INT PRIMARY KEY UNIQUE,
+    cliente_id INT PRIMARY KEY,
     nombre VARCHAR(100),
     email VARCHAR(100),
     direccion VARCHAR(50)
@@ -41,8 +41,6 @@ CREATE TABLE estado_envio (
     estado_id INT PRIMARY KEY AUTO_INCREMENT,
     nombre VARCHAR(20)
 );
-
---resto de tablas (secundarias, terciarias, etc...)--
 
 CREATE TABLE paquetes (
     paquete_id INT PRIMARY KEY,

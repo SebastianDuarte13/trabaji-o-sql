@@ -8,9 +8,10 @@ INSERT INTO paises (pais_id, nombre) VALUES
 
 -- Insertar valores en la tabla tipo_servicios--
 INSERT INTO tipo_servicios (servicio_id, nombre) VALUES 
-(1, 'Estándar'),
-(2, 'Express'),
-(3, 'Prioritario');
+(1, 'nacional'),
+(2, 'internacional,'),
+(3, 'exprés,'),
+(4, 'estándar')
 
 -- Insertar valores en la tabla conductores--
 INSERT INTO conductores (conductor_id, nombre) VALUES 
@@ -38,7 +39,8 @@ INSERT INTO modelo_vehiculos (modelo_id, nombre, capacidad_carga) VALUES
 INSERT INTO estado_envio (nombre) VALUES 
 ('En tránsito'),
 ('Entregado'),
-('Pendiente');
+('Pendiente'),
+('retenido en aduana');
 
 -- Insertar valores en la tabla paquetes--
 INSERT INTO paquetes (paquete_id, peso, dimensiones, contenido, valor_declarado, servicio_id) VALUES 
