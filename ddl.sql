@@ -6,7 +6,12 @@ USE logistica;
 
 CREATE TABLE paises (
     pais_id INT PRIMARY KEY,
-    nombre VARCHAR(100)
+    nombre VARCHAR(50)
+);
+
+CREATE TABLE tipo_servicios (
+    servicio_id INT PRIMARY KEY,
+    nombre VARCHAR(30)
 );
 
 CREATE TABLE conductores (
@@ -15,7 +20,7 @@ CREATE TABLE conductores (
 );
 
 CREATE TABLE clientes (
-    cliente_id INT PRIMARY KEY,
+    cliente_id INT PRIMARY KEY UNIQUE,
     nombre VARCHAR(100),
     email VARCHAR(100),
     direccion VARCHAR(50)
@@ -23,27 +28,37 @@ CREATE TABLE clientes (
 
 CREATE TABLE auxiliares (
     auxiliar_id INT PRIMARY KEY,
-    nombre VARCHAR(100),
-    telefono INT
+    nombre VARCHAR(100)
 );
+
+CREATE TABLE modelo_vehiculos (
+    modelo_id INT PRIMARY KEY,
+    nombre VARCHAR(30),
+    capacidad_carga DECIMAL(10, 2)
+);
+
+CREATE TABLE estado_envio (
+    estado_id INT PRIMARY KEY AUTO_INCREMENT,
+    nombre VARCHAR(20)
+);
+
+--resto de tablas (secundarias, terciarias, etc...)--
 
 CREATE TABLE paquetes (
     paquete_id INT PRIMARY KEY,
-    numero_seguimiento INT,
+    numero_seguimiento INT AUTO_INCREMENT,
     peso DECIMAL(10, 2),
-    dimensiones VARCHAR(50), 
+    dimensiones VARCHAR(50),
     contenido VARCHAR(50),
     valor_declarado DECIMAL(10, 2),
-    tipo_servicio VARCHAR(20),
-    estado VARCHAR(15)
+    servicio_id INT,
+    UNIQUE (numero_seguimiento),
+    FOREIGN KEY (servicio_id) REFERENCES tipo_servicios(servicio_id)
 );
-
---tablas secundarias--
-
 
 CREATE TABLE ciudades (
     ciudad_id INT PRIMARY KEY,
-    nombre VARCHAR(100),
+    nombre VARCHAR(50),
     pais_id INT,
     FOREIGN KEY (pais_id) REFERENCES paises(pais_id)
 );
@@ -57,13 +72,13 @@ CREATE TABLE sucursales (
 );
 
 CREATE TABLE vehiculos (
-    vehiculo_id INT PRIMARY KEY,
+    vehiculo_id INT PRIMARY KEY UNIQUE,
     placa VARCHAR(6),
     marca VARCHAR(20),
-    modelo VARCHAR(20),
-    capacidad_carga DECIMAL(10, 2),
     sucursal_id INT,
-    FOREIGN KEY (sucursal_id) REFERENCES sucursales(sucursal_id)
+    modelo_id INT,
+    FOREIGN KEY (sucursal_id) REFERENCES sucursales(sucursal_id),
+    FOREIGN KEY (modelo_id) REFERENCES modelo_vehiculos(modelo_id)
 );
 
 CREATE TABLE telefonos_conductores (
@@ -83,8 +98,11 @@ CREATE TABLE rutas (
 CREATE TABLE ruta_auxiliares (
     ruta_id INT,
     auxiliar_id INT,
+    conductor_id INT,
+    PRIMARY KEY (ruta_id, auxiliar_id, conductor_id),
     FOREIGN KEY (ruta_id) REFERENCES rutas(ruta_id),
-    FOREIGN KEY (auxiliar_id) REFERENCES auxiliares(auxiliar_id)
+    FOREIGN KEY (auxiliar_id) REFERENCES auxiliares(auxiliar_id),
+    FOREIGN KEY (conductor_id) REFERENCES conductores(conductor_id)
 );
 
 CREATE TABLE conductores_rutas (
@@ -92,6 +110,7 @@ CREATE TABLE conductores_rutas (
     conductor_id INT,
     vehiculo_id INT,
     sucursal_id INT,
+    PRIMARY KEY (ruta_id, conductor_id, vehiculo_id, sucursal_id),
     FOREIGN KEY (ruta_id) REFERENCES rutas(ruta_id),
     FOREIGN KEY (conductor_id) REFERENCES conductores(conductor_id),
     FOREIGN KEY (vehiculo_id) REFERENCES vehiculos(vehiculo_id),
@@ -106,11 +125,12 @@ CREATE TABLE telefonos_clientes (
 );
 
 CREATE TABLE seguimiento (
-    seguimiento_id INT PRIMARY KEY,
+    seguimiento_id INT PRIMARY KEY AUTO_INCREMENT UNIQUE,
     ubicacion VARCHAR(40),
     fecha_hora DATETIME,
-    estado VARCHAR(20),
+    estado_id INT,
     paquete_id INT,
+    FOREIGN KEY (estado_id) REFERENCES estado_envio(estado_id),
     FOREIGN KEY (paquete_id) REFERENCES paquetes(paquete_id)
 );
 
@@ -126,4 +146,11 @@ CREATE TABLE envios (
     FOREIGN KEY (ruta_id) REFERENCES rutas(ruta_id),
     FOREIGN KEY (sucursal_id) REFERENCES sucursales(sucursal_id),
     FOREIGN KEY (cliente_id) REFERENCES clientes(cliente_id)
+);
+
+CREATE TABLE telefonos_auxiliares (
+    telefono_id INT PRIMARY KEY,
+    numero INT,
+    auxiliar_id INT,
+    FOREIGN KEY (auxiliar_id) REFERENCES auxiliares(auxiliar_id)
 );
